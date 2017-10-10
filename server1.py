@@ -7,18 +7,15 @@ score = [0, 0]
 totalQuestions = int(raw_input("Enter the total number of questions: "))
 filename = raw_input("Enter the name of the quiz file: ")
 f = open(filename, 'r')
-playOn = True
 def askQuestion(connlist, playerNo, isChallenge, challenger):
-    # global questionNo
     global totalQuestions
     global score
     global f
-    global playOn
     ques = f.readline()
     ans = f.readline()
     connlist[playerNo].sendall("Q")
     connlist[playerNo].sendall(ques)          #send question
-    data = conn.recv(1024)      #receive answer
+    data = conn.recv(1024)                    #receive answer
     if ans == data + '\n':
         score[playerNo]+=10
         connlist[playerNo].sendall("Correct Answer")
