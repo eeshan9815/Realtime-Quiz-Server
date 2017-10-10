@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 import socket
+import sys
 
 def question(s):
     ques = s.recv(1024)
-    print ques
+    print ques,
     ans = raw_input("Answer: ")
     s.sendall(ans)
     response = s.recv(1024)
@@ -16,7 +17,7 @@ def scores(s):
 def challenge(s):
     prompt = s.recv(1024)
     print prompt
-    ans = raw_input()
+    ans = raw_input("Response: ")
     s.sendall(ans)
 
 def final(s):
@@ -38,5 +39,7 @@ while True:
     elif choice[0] == "X":
         final(s)
         break
-
-
+    elif choice[0] == "A":
+        final(s)
+    else:
+        print "Invalid choice: ", choice

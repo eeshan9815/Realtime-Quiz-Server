@@ -1,0 +1,32 @@
+Question 1, Choice A B C D
+A
+Question 2, Choice A B C D
+C
+Question 3, Choice A B C D
+D
+Question 4, Choice A B C D
+B
+Question 5, Choice A B C D
+A
+Question 6, Choice A B C D
+B
+Question 7, Choice A B C D
+A
+Question 8, Choice A B C D
+C
+Question 9, Choice A B C D
+D
+Question 10, Choice A B C D
+A
+Question 11, Choice A B C D
+B
+Question 12, Choice A B C D
+D
+Question 13, Choice A B C D
+C
+Question 14, Choice A B C D
+B
+Question 15, Choice A B C D
+D
+Question 16, Choice A B C D
+C
