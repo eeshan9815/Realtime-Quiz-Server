@@ -3,31 +3,60 @@ import socket
 import threading
 import sys
 import time
+import datetime
 HOST = 'localhost'
 PORT = int(raw_input("Enter the port number to bind with: "))
 score = [0, 0]
 totalQuestions = int(raw_input("Enter the total number of questions: "))
 filename = raw_input("Enter the name of the quiz file: ")
+t = [0, 0]
 f = open(filename, 'r')
-def askQuestion(connlist, playerNo, isChallenge, challenger, ques, ans):
+isDone = False
+# def askQuestion(connlist, playerNo, isChallenge, challenger, ques, ans):
+#     global score
+#     global f
+#     connlist[playerNo].sendall("Q\n")
+#     time.sleep(0.1)
+#     connlist[playerNo].sendall(ques+"\n")          #sendall question
+#     time.sleep(0.1)
+#     data = connlist[playerNo].recv(1024)                    #receive answer
+#     if ans == data + '\n':
+#         score[playerNo]+=10
+#         connlist[playerNo].sendall("Correct Answer\n")
+#         time.sleep(0.1)
+#     else:
+#         if isChallenge:
+#             askQuestion(connlist, 1-playerNo, False, True, ques, ans)
+#         if challenger:
+#             score[playerNo]-=10
+#         connlist[playerNo].sendall("Incorrect Answer\n")
+#         time.sleep(0.1)
+def askQuestion(connlist, playerNo, ques, ans):
     global score
     global f
+    global t
+    global isDone
     connlist[playerNo].sendall("Q\n")
     time.sleep(0.1)
     connlist[playerNo].sendall(ques+"\n")          #sendall question
     time.sleep(0.1)
     data = connlist[playerNo].recv(1024)                    #receive answer
-    if ans == data + '\n':
+    t[playerNo] = datetime.datetime.now()
+    if (not isDone) and (ans == data + '\n'):
         score[playerNo]+=10
+        isDone = not isDone
         connlist[playerNo].sendall("Correct Answer\n")
         time.sleep(0.1)
     else:
-        if isChallenge:
-            askQuestion(connlist, 1-playerNo, False, True, ques, ans)
-        if challenger:
+        if ans == data + '\n':
+            connlist[playerNo].sendall("Too late!\n")
+            time.sleep(0.1)
+        else:
+            connlist[playerNo].sendall("Incorrect Answer\n")
+            time.sleep(0.1)
             score[playerNo]-=10
-        connlist[playerNo].sendall("Incorrect Answer\n")
-        time.sleep(0.1)
+
+
 def sendallScore(connlist):
     global score
     for i, conn in enumerate(connlist):
@@ -56,35 +85,34 @@ print "Connected to Player 2 at ", addr
 for questionNo in range(totalQuestions):
     conn1.sendall("A\n")
     time.sleep(0.1)
-    conn1.sendall("Question Number "+str(questionNo+1)+" for Player "+str(questionNo%2+1)+"\n")
+    conn1.sendall("Question Number "+str(questionNo+1)+"\n")
     time.sleep(0.1)
     conn2.sendall("A\n")
     time.sleep(0.1)
-    conn2.sendall("Question Number "+str(questionNo+1)+" for Player "+str(questionNo%2+1)+"\n")
+    conn2.sendall("Question Number "+str(questionNo+1)+"\n")
     time.sleep(0.1)
     #TODO make function
-    connlist[1 - questionNo%2].sendall("C\n")
-    time.sleep(0.1)
-    connlist[1 - questionNo%2].sendall("Do you want to challenge the next question?(Y/N)\n")
-    time.sleep(0.1)
-    data = connlist[1 - questionNo%2].recv(1024)
-    if data[0] == "Y":
-        isChallenge = True
-    elif data[0] == "N":
-        isChallenge = False
-    else:
-        print "SOMETHING WEIRD"
+    # connlist[1 - questionNo%2].sendall("C\n")
+    # time.sleep(0.1)
+    # connlist[1 - questionNo%2].sendall("Do you want to challenge the next question?(Y/N)\n")
+    # time.sleep(0.1)
+    # data = connlist[1 - questionNo%2].recv(1024)
+    # if data[0] == "Y":
+    #     isChallenge = True
+    # elif data[0] == "N":
+    #     isChallenge = False
     ques = f.readline()
     ans = f.readline()
-    askQuestion(connlist, questionNo%2, isChallenge, False, ques, ans)
-    sendallScore(connlist)
-    # playerThread1 = threading.Thread(target = (askQuestion if questionNo%2 == 0 else askChallenge), name = "Thread1", args = (conn1, 0))
-    # playerThread2 = threading.Thread(target = (askQuestion if questionNo%2 == 1 else askChallenge), name = "Thread2", args = (conn2, 1))
-    # playerThread1.start()
-    # playerThread2.start()
-    # playerThread1.join()
-    # playerThread2.join()
+    isDone = False
+    # askQuestion(connlist, questionNo%2, isChallenge, False, ques, ans)
+    playerThread1 = threading.Thread(target = askQuestion, name = "Thread1", args = (connlist, 0, ques, ans,))
+    playerThread2 = threading.Thread(target = askQuestion, name = "Thread2", args = (connlist, 1, ques, ans,))
+    playerThread1.start()
+    playerThread2.start()
+    playerThread1.join()
+    playerThread2.join()
     # TODO Buzzer Round Implementation using threading, threading not required for current task
+    sendallScore(connlist)
 if score[0]>score[1]:
     print "Player 1 won, with score: ", score
     conn1.sendall("X\n")
