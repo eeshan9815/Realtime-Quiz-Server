@@ -6,6 +6,9 @@ def question(s):
     ques = s.recv(1024)
     print ques,
     ans = raw_input("Answer: ")
+    while ans not in ['A', 'B', 'C', 'D']:
+        print "Enter a valid choice!"
+        ans = raw_input("Answer: ")
     s.sendall(ans)
     response = s.recv(1024)
     print response
@@ -18,6 +21,9 @@ def challenge(s):
     prompt = s.recv(1024)
     print prompt
     ans = raw_input("Response: ")
+    while ans not in ['Y', 'N']:
+        print "Enter a valid choice!"
+        ans = raw_input("Answer: ")
     s.sendall(ans)
 
 def final(s):
