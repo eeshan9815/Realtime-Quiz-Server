@@ -8,3 +8,10 @@ The program uses TCP Sockets
 ## _extra_ Buzzer Round Quiz
 This is another implementation of a quiz server which supports a Buzzer round, i.e. two players can simultaneously answer and the person who replies correctly, earlier is rewarded.
 The program uses _threading_ and TCP Sockets.
+To run the quiz, open the server(**server_buzzer.py**) and enter the network credentials, followed by opening two instances of the client(**client.py**) and entering the network credentials.
+
+## Scoring Scheme
+1. Correct Answer : 10 points
+2. Incorrect Answer
+    * Normal : 0 points
+    * Challenge : -10 points
