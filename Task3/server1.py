@@ -78,13 +78,6 @@ for questionNo in range(totalQuestions):
     ans = f.readline()
     askQuestion(connlist, questionNo%2, isChallenge, False, ques, ans)
     sendallScore(connlist)
-    # playerThread1 = threading.Thread(target = (askQuestion if questionNo%2 == 0 else askChallenge), name = "Thread1", args = (conn1, 0))
-    # playerThread2 = threading.Thread(target = (askQuestion if questionNo%2 == 1 else askChallenge), name = "Thread2", args = (conn2, 1))
-    # playerThread1.start()
-    # playerThread2.start()
-    # playerThread1.join()
-    # playerThread2.join()
-    # TODO Buzzer Round Implementation using threading, threading not required for current task
 if score[0]>score[1]:
     print "Player 1 won, with score: ", score
     conn1.sendall("X\n")
